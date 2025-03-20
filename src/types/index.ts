@@ -1,5 +1,7 @@
+export type TimeRangeType = '1h' | '2h' | '4h' | '6h' | '12h' | '24h' | '7d' | '30d';
+
 export interface EnergyData {
-  timestamp: string;
+  timestamp: number;
   consumption: number;
   production: number;
   unit: string;
@@ -19,12 +21,9 @@ export interface User {
 }
 
 export interface DashboardConfig {
-  id: string;
-  userId: string;
-  name: string;
-  charts: ChartConfig[];
-  layout: {
-    type: 'grid' | 'flex';
-    columns: number;
+  user_id: string;
+  config: {
+    productionSensor: string;
+    consumptionSensor: string;
   };
 } 
