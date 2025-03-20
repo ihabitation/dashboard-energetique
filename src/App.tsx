@@ -1,25 +1,50 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { ChakraProvider, Box } from '@chakra-ui/react';
+import { Login } from './components/Login';
+import { Dashboard } from './components/Dashboard';
+import { authService } from './services/supabase';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const user = await authService.getCurrentUser();
+      setIsAuthenticated(!!user);
+    } catch (error) {
+      setIsAuthenticated(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
+  };
+
+  if (isLoading) {
+    return (
+      <ChakraProvider>
+        <Box p={4}>Chargement...</Box>
+      </ChakraProvider>
+    );
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ChakraProvider>
+      <Box minH="100vh" bg="gray.50">
+        {isAuthenticated ? (
+          <Dashboard />
+        ) : (
+          <Login onLoginSuccess={handleLoginSuccess} />
+        )}
+      </Box>
+    </ChakraProvider>
   );
 }
 

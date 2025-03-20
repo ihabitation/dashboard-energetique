@@ -1,46 +1,83 @@
-# Getting Started with Create React App
+# Dashboard Énergétique
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Une application web React pour visualiser les données de consommation et de production d'énergie en temps réel.
 
-## Available Scripts
+## Fonctionnalités actuelles
 
-In the project directory, you can run:
+- Authentification avec Supabase
+- Visualisation des données en temps réel
+- Graphique en barres pour la consommation et la production
+- Plages horaires configurables (1h à 30 jours)
+- Actualisation automatique toutes les 2 minutes
+- Interface utilisateur responsive avec Chakra UI
 
-### `npm start`
+## Prérequis
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Node.js (v14 ou supérieur)
+- npm ou yarn
+- Un compte Supabase avec une base de données configurée
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Configuration
 
-### `npm test`
+1. Créez un fichier `.env` à la racine du projet avec les variables suivantes :
+```
+REACT_APP_SUPABASE_URL=votre_url_supabase
+REACT_APP_SUPABASE_ANON_KEY=votre_clé_anon_supabase
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. Installez les dépendances :
+```bash
+npm install
+```
 
-### `npm run build`
+3. Lancez l'application en mode développement :
+```bash
+npm start
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Structure de la base de données
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Table `home_assistant_data`
+- `timestamp` (timestamp)
+- `entity_id` (string)
+- `state` (string)
+- `unit_of_measurement` (string)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Capteurs utilisés
+- Consommation : `sensor.ecu_current_power`
+- Production : `sensor.shellyproem50_08f9e0e6d6c8_em0_power`
 
-### `npm run eject`
+## Technologies utilisées
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- React 18
+- TypeScript
+- Chakra UI
+- Chart.js
+- Supabase
+- React Router
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## État actuel du développement
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- ✅ Authentification de base
+- ✅ Visualisation des données en temps réel
+- ✅ Graphique en barres
+- ✅ Sélection de plage horaire
+- ✅ Actualisation automatique
+- ⏳ Sauvegarde des préférences utilisateur
+- ⏳ Personnalisation du dashboard
+- ⏳ Export des données
+- ⏳ Notifications
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Prochaines étapes
 
-## Learn More
+1. Implémentation de la sauvegarde des préférences utilisateur
+2. Ajout de graphiques supplémentaires (ligne, camembert)
+3. Personnalisation du dashboard
+4. Export des données
+5. Système de notifications
+6. Tests unitaires et d'intégration
+7. Optimisation des performances
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Licence
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+MIT
