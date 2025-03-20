@@ -8,7 +8,8 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ChartOptions,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { EnergyData } from '../types';
@@ -46,7 +47,8 @@ export const EnergyChart: React.FC<EnergyChartProps> = ({ data, series }) => {
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
         borderColor: 'rgb(255, 99, 132)',
         borderWidth: 1,
-        order: 2
+        order: 2,
+        borderRadius: 4,
       },
       {
         label: 'Production',
@@ -54,21 +56,34 @@ export const EnergyChart: React.FC<EnergyChartProps> = ({ data, series }) => {
         backgroundColor: 'rgba(75, 192, 192, 0.5)',
         borderColor: 'rgb(75, 192, 192)',
         borderWidth: 1,
-        order: 1
+        order: 1,
+        borderRadius: 4,
       }
     ],
   };
 
-  const options = {
+  const options: ChartOptions<'bar'> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top' as const,
+        labels: {
+          padding: 20,
+          font: {
+            size: 12,
+          },
+        },
       },
       tooltip: {
         mode: 'index' as const,
         intersect: false,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        titleColor: '#000',
+        bodyColor: '#000',
+        borderColor: '#ddd',
+        borderWidth: 1,
+        padding: 10,
         callbacks: {
           label: function(context: any) {
             let label = context.dataset.label || '';
@@ -76,41 +91,47 @@ export const EnergyChart: React.FC<EnergyChartProps> = ({ data, series }) => {
               label += ': ';
             }
             if (context.parsed.y !== null) {
-              label += `${context.parsed.y} W`;
+              label += `${context.parsed.y.toFixed(1)} W`;
             }
             return label;
           }
         }
       },
+      title: {
+        display: false,
+      },
     },
     scales: {
       x: {
-        display: true,
-        title: {
-          display: true,
-          text: 'Heure'
-        },
         grid: {
-          display: false
-        }
+          display: false,
+        },
+        ticks: {
+          maxRotation: 0,
+          font: {
+            size: 10,
+          },
+        },
       },
       y: {
-        display: true,
-        title: {
-          display: true,
-          text: 'Puissance (W)'
-        },
+        beginAtZero: true,
         grid: {
-          color: 'rgba(0, 0, 0, 0.1)'
+          color: 'rgba(0, 0, 0, 0.1)',
         },
-        beginAtZero: true
-      }
+        ticks: {
+          font: {
+            size: 10,
+          },
+          callback: function(value: any) {
+            return value + ' W';
+          },
+        },
+      },
     },
     interaction: {
-      mode: 'nearest' as const,
-      axis: 'x' as const,
-      intersect: false
-    }
+      intersect: false,
+      mode: 'index',
+    },
   };
 
   return (

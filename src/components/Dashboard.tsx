@@ -7,6 +7,15 @@ import {
   HStack,
   Text,
   Select,
+  Grid,
+  GridItem,
+  Card,
+  CardBody,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { EnergyChart } from './EnergyChart';
 import { EnergyData } from '../types';
@@ -19,6 +28,9 @@ export const Dashboard: React.FC = () => {
   const [energyData, setEnergyData] = useState<EnergyData[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<TimeRangeType>('1h');
+
+  const bgColor = useColorModeValue('white', 'gray.800');
+  const borderColor = useColorModeValue('gray.200', 'gray.700');
 
   useEffect(() => {
     console.log('Dashboard monté, chargement initial des données...');
@@ -74,13 +86,30 @@ export const Dashboard: React.FC = () => {
     }
   };
 
+  const calculateStats = () => {
+    if (energyData.length === 0) return { currentProduction: 0, currentConsumption: 0, totalProduction: 0, totalConsumption: 0 };
+
+    const latest = energyData[energyData.length - 1];
+    const totalProduction = energyData.reduce((sum, data) => sum + data.production, 0);
+    const totalConsumption = energyData.reduce((sum, data) => sum + data.consumption, 0);
+
+    return {
+      currentProduction: latest.production,
+      currentConsumption: latest.consumption,
+      totalProduction,
+      totalConsumption,
+    };
+  };
+
+  const stats = calculateStats();
+
   if (isLoading) {
     return <Box p={4}>Chargement...</Box>;
   }
 
   return (
     <Box p={4}>
-      <VStack gap={4} align="stretch">
+      <VStack gap={6} align="stretch">
         <HStack justify="space-between">
           <Heading>Dashboard Énergétique</Heading>
           <Button colorScheme="red" onClick={handleSignOut}>
@@ -93,6 +122,53 @@ export const Dashboard: React.FC = () => {
             <Text>Erreur: {error}</Text>
           </Box>
         )}
+
+        <Grid templateColumns="repeat(4, 1fr)" gap={4}>
+          <GridItem>
+            <Card bg={bgColor} borderWidth={1} borderColor={borderColor}>
+              <CardBody>
+                <Stat>
+                  <StatLabel>Production Actuelle</StatLabel>
+                  <StatNumber>{stats.currentProduction.toFixed(1)} W</StatNumber>
+                  <StatHelpText>En temps réel</StatHelpText>
+                </Stat>
+              </CardBody>
+            </Card>
+          </GridItem>
+          <GridItem>
+            <Card bg={bgColor} borderWidth={1} borderColor={borderColor}>
+              <CardBody>
+                <Stat>
+                  <StatLabel>Consommation Actuelle</StatLabel>
+                  <StatNumber>{stats.currentConsumption.toFixed(1)} W</StatNumber>
+                  <StatHelpText>En temps réel</StatHelpText>
+                </Stat>
+              </CardBody>
+            </Card>
+          </GridItem>
+          <GridItem>
+            <Card bg={bgColor} borderWidth={1} borderColor={borderColor}>
+              <CardBody>
+                <Stat>
+                  <StatLabel>Production Totale</StatLabel>
+                  <StatNumber>{(stats.totalProduction / 1000).toFixed(2)} kWh</StatNumber>
+                  <StatHelpText>Sur la période</StatHelpText>
+                </Stat>
+              </CardBody>
+            </Card>
+          </GridItem>
+          <GridItem>
+            <Card bg={bgColor} borderWidth={1} borderColor={borderColor}>
+              <CardBody>
+                <Stat>
+                  <StatLabel>Consommation Totale</StatLabel>
+                  <StatNumber>{(stats.totalConsumption / 1000).toFixed(2)} kWh</StatNumber>
+                  <StatHelpText>Sur la période</StatHelpText>
+                </Stat>
+              </CardBody>
+            </Card>
+          </GridItem>
+        </Grid>
 
         <Box>
           <Select value={timeRange} onChange={handleTimeRangeChange} maxWidth="200px">
@@ -112,14 +188,18 @@ export const Dashboard: React.FC = () => {
             <Text>Aucune donnée disponible pour la période sélectionnée</Text>
           </Box>
         ) : (
-          <Box p={4} borderWidth={1} borderRadius={8} boxShadow="lg">
-            <Heading size="md" mb={4}>Consommation et Production</Heading>
-            <EnergyChart 
-              data={energyData}
-              type="bar"
-              series={['production', 'consumption']}
-            />
-          </Box>
+          <Card bg={bgColor} borderWidth={1} borderColor={borderColor}>
+            <CardBody>
+              <Heading size="md" mb={4}>Consommation et Production</Heading>
+              <Box height="400px">
+                <EnergyChart 
+                  data={energyData}
+                  type="bar"
+                  series={['production', 'consumption']}
+                />
+              </Box>
+            </CardBody>
+          </Card>
         )}
       </VStack>
     </Box>
